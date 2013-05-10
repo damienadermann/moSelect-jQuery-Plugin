@@ -1,0 +1,52 @@
+.moselect-box {
+    width: 167px;
+    height: 22px;
+    padding: 0 7px;
+    border: solid 1px #9babb5;
+    border-radius: 4px;
+    background: url('../images/moSelect/input_bg.png') repeat-x 0 0;
+    padding-left: 8px;
+    font-size: 12px;
+    colour: #686D71;
+}
+
+.moselect-description {
+    height: 15px;
+    padding-top: 5px;
+    overflow: hidden:
+    display: block;
+    background-color: white;
+    background: url('../images/moSelect/select_arrow.png') no-repeat 100% 9px;
+}
+
+.moselect-wrapper {
+    position: absolute;
+    padding: 10px;
+    z-index: 10;
+    border: 1px solid #888;
+    border-top: 1px solid #fff;
+    width: 161px;
+    max-height: 300px;
+    background-color: white;
+    display: none;
+    overflow-y: scroll;
+    overflow-: hidden;
+}
+
+.moselect-wrapper li {
+    display: block;
+    padding: 3px 0;
+    clear: both;
+}
+
+.moselect-wrapper li input {
+    float: right;
+}
+
+.moselect-wrapper li label {
+    float: left;
+}
+
+.moselect-value-label {
+    padding-left: 20px;
+}
