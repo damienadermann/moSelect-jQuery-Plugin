@@ -3,7 +3,7 @@
  *
  * Author: Damien Adermann
  */
-;(function( $, window, document, undefined ) {
+;(function( $, _, window, document, undefined ) {
 
     //List Model
     function GroupList(params) {
@@ -299,4 +299,4 @@
         });
       };
 
-})( jQuery, window, document );
+})( jQuery, _, window, document );
