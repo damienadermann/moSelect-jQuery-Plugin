@@ -8,10 +8,12 @@
     //List Model
     function GroupList(params) {
 
-        this.groups = params.groups;
-        this.selectedValues = params.selected;
+        this.init = function(params) {
+            this.groups = params.groups;
 
-        this.init = function() {
+            this.selectedValues = (params.selected === undefined || params.selected === 'all')? 
+                this.allValues():
+                params.selected;
 
             return this;
         };
@@ -51,6 +53,11 @@
             return groupsAndNames.join(', ');
 
 
+        };
+
+        this.getTextDescriptionLimitedLength = function() {
+            var description = this.getTextDescription();
+            return description.length > 25? description.substr(0, 24) + "...": description;
         };
 
         this.groupsSelectedNames = function() {
@@ -116,14 +123,16 @@
             return this;
         }
 
-        return this.init();
+        return this.init(params);
     }
 
     // Create the defaults once
     var pluginName = "moSelect",
         defaults = {
             selected : [],
-            name: 'multiselectValue',
+            name : 'multiselectValue',
+            groupName : false,
+            allName : false,
             values : [
 
             ],
@@ -146,7 +155,7 @@
 
         this.template = [
             '<div class="moselect-box">',
-            '   <div class="moselect-description"><%= description%></div>',
+            '   <div class="moselect-description"><%= description.length > 25? description.substr(0, 24) + "...": description %></div>',
             '</div>',
             '<div class="moselect-wrapper">',
             '</div>'
@@ -154,12 +163,12 @@
 
         this.selectTemplate = [
             '<ul>',
-            '   <li>All<input type="checkbox" class="moselect-all-selected" <% if(allSelected){ print("checked=checked"); }  %>></li>',
+            '   <li>All<input type="checkbox" class="moselect-all-selected" <% if(allName){ %>name="<%= allName %>"<% } %> <% if(allSelected){ print("checked=checked"); }  %>></li>',
             '<% _(groups).each(function(group) { %>',
             '   <% if(group.id === "groupless") { %>',
             '       <li><span class="moselect-groupless-label"><%= group.label %></span><input type="checkbox" class="moselect-value-toggle" name="<%= inputName %>" value=<%= group.values[0].value %>  <% if(_(selected).contains(group.values[0].value)){ print("checked=checked"); }  %> /></li>',
             '   <% } else { %>',
-            '       <li><span class="moselect-group-label"><%= group.label %><input type="checkbox" class="moselect-group-toggle" value=<%= group.id %> <% if(_(groupsSelected).contains(group.id)){ print("checked=checked"); } %> />',
+            '       <li><span class="moselect-group-label"><%= group.label %><input type="checkbox" class="moselect-group-toggle" <% if(groupName){ %>name="<%= groupName %>" <% } %> value=<%= group.id %> <% if(_(groupsSelected).contains(group.id)){ print("checked=checked"); } %> />',
             '           <ul>',
             '           <% _(group.values).each(function(value) { %>',
             '               <li><span class="moselect-value-label"><%= value.label %></span><input type="checkbox" class="moselect-value-toggle" name="<%= inputName %>" value=<%= value.value %> <% if(_(selected).contains(value.value)){ print("checked=checked"); } %> /></li>',
@@ -196,6 +205,9 @@
                 return _(group).extend({values : []});
             });
 
+            self.groupName = this.options.groupName;
+            self.allName = this.options.allName;
+
 
             _(self.options.values).each(function(value) {
                 if(value.group > 0) {
@@ -220,9 +232,11 @@
 
         stringifyOptions : function() {
             //Stringify input number values
-            this.options.selected = _(this.options.selected).map(function(value) {
-                return '' + value;
-            });
+            if(typeof this.options.selected !== "string") {
+                this.options.selected = _(this.options.selected).map(function(value) {
+                    return '' + value;
+                });
+            }
 
             this.options.values = _(this.options.values).map(function(value) {
                 value.value += '';
@@ -234,7 +248,6 @@
                 group.id += '';
                 return group;
             });
-
         },
 
         buildMultiSelect : function() {
@@ -244,7 +257,7 @@
         },
 
         updateSelected : function() {
-            $(this.element).find('.moselect-description').html(this.groupList.getTextDescription());
+            $(this.element).find('.moselect-description').html(this.groupList.getTextDescriptionLimitedLength());
             this.renderSelect();
         },
 
@@ -273,7 +286,7 @@
         },
 
         render : function() {
-            $(this.element).html(_.template(this.template, { description : this.groupList.getTextDescription()}));
+            $(this.element).html(_.template(this.template, { description : this.groupList.getTextDescriptionLimitedLength()}));
         },
 
         renderSelect : function() {
@@ -282,6 +295,8 @@
                 selected : this.groupList.getSelectedValues(),
                 inputName : this.options.name,
                 groupsSelected : this.groupList.groupsSelected(),
+                groupName : this.groupName,
+                allName : this.allName,
                 allSelected : this.groupList.allSelected()
             };
 
