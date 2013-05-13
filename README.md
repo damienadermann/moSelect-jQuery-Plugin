@@ -1,6 +1,7 @@
 TODO
 
 Example use:
+
             $('#status-select').moSelect( {
                 selected: ['active', 'inactive'],
                 name: 'active-filter[]',
@@ -18,7 +19,7 @@ Example use:
 
             $('#dealer-groups-select').moSelect( {
                 selected: [1,2,3,4,5],
-                name: 'somename',
+                name: 'somename[]',
                 values : [
                     {
                         group: 1,
